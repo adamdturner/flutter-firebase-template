@@ -43,3 +43,44 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Firebase Configuration Files - DO NOT COMMIT
+# These contain API keys and project-specific credentials
+firebase_options.dart
+lib/firebase_options.dart
+**/firebase_options.dart
+
+# Android Firebase Config
+google-services.json
+android/app/google-services.json
+
+# iOS Firebase Config
+GoogleService-Info.plist
+ios/Runner/GoogleService-Info.plist
+macos/Runner/GoogleService-Info.plist
+
+# Firebase CLI
+.firebaserc
+firebase-debug.log
+firebase-debug.*.log
+.firebase/
+
+# Firebase Rules (IMPORTANT: You may want to COMMIT these for your template)
+# Uncomment the rules you want to keep in version control:
+# firestore.rules
+# firestore.indexes.json
+# storage.rules
+# database.rules.json
+
+# Firebase Hosting/Functions config
+# Keep firebase.json in version control but not project-specific .firebaserc
+
+# Cloud Functions dependencies
+functions/node_modules/
+functions/lib/
+functions/.eslintrc.js
+
+# Environment files that may contain secrets
+.env
+.env.*
+*.env
