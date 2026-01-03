@@ -74,15 +74,13 @@ firebase.json                 # Firebase configuration
 
 **These files ARE tracked (template code):**
 - `firebase.json` - Firebase project configuration
-- `firestore.rules` - Database security rules (update before production!)
-- `storage.rules` - Storage security rules (update before production!)
+- `firestore.rules` - Database security rules (production-ready)
+- `storage.rules` - Storage security rules (production-ready)
 - `functions/src/` - Cloud Functions source code
 
-## ⚠️ Important Security Steps
+## 🛡️ Security Rules
 
-### 1. Update Firebase Security Rules
-
-The default rules allow anyone to read/write for 30 days. **Update these before going to production:**
+The template includes **production-ready security rules** that require authentication:
 
 **Firestore (`firestore.rules`):**
 ```
@@ -108,11 +106,7 @@ service firebase.storage {
 }
 ```
 
-### 2. Deploy Your Rules
-
-```bash
-firebase deploy --only firestore:rules,storage:rules
-```
+**Customize these rules** based on your app's data structure and access patterns.
 
 ## 🔥 Firebase Features
 
