@@ -25,7 +25,10 @@ class IssueReportRepository {
       
       return docRef.id;
     } catch (e) {
-      throw Exception('Error submitting issue report: $e');
+      if (e.toString().contains('Issue Report Repository Error')) {
+        rethrow;
+      }
+      throw Exception('Issue Report Repository Error: failed to submit issue report - ${e.toString()}');
     }
   }
 
@@ -38,13 +41,16 @@ class IssueReportRepository {
           .get();
 
       if (!docSnapshot.exists) {
-        throw Exception('Issue report not found for ID: $issueId');
+        throw Exception('Issue Report Repository Error: issue report not found for ID: $issueId');
       }
 
       final data = docSnapshot.data()!;
       return IssueReport.fromMap(data, issueId: issueId);
     } catch (e) {
-      throw Exception('Error fetching issue report: $e');
+      if (e.toString().contains('Issue Report Repository Error')) {
+        rethrow;
+      }
+      throw Exception('Issue Report Repository Error: failed to fetch issue report - ${e.toString()}');
     }
   }
 
@@ -64,7 +70,10 @@ class IssueReportRepository {
               ))
           .toList();
     } catch (e) {
-      throw Exception('Error fetching user issue reports: $e');
+      if (e.toString().contains('Issue Report Repository Error')) {
+        rethrow;
+      }
+      throw Exception('Issue Report Repository Error: failed to fetch user issue reports - ${e.toString()}');
     }
   }
 
@@ -98,7 +107,10 @@ class IssueReportRepository {
               ))
           .toList();
     } catch (e) {
-      throw Exception('Error fetching all issue reports: $e');
+      if (e.toString().contains('Issue Report Repository Error')) {
+        rethrow;
+      }
+      throw Exception('Issue Report Repository Error: failed to fetch all issue reports - ${e.toString()}');
     }
   }
 
@@ -129,7 +141,10 @@ class IssueReportRepository {
           .doc(issueId)
           .update(updateData);
     } catch (e) {
-      throw Exception('Error updating issue status: $e');
+      if (e.toString().contains('Issue Report Repository Error')) {
+        rethrow;
+      }
+      throw Exception('Issue Report Repository Error: failed to update issue status - ${e.toString()}');
     }
   }
 
@@ -138,7 +153,10 @@ class IssueReportRepository {
     try {
       await _firestore.collection('issue-reports').doc(issueId).delete();
     } catch (e) {
-      throw Exception('Error deleting issue report: $e');
+      if (e.toString().contains('Issue Report Repository Error')) {
+        rethrow;
+      }
+      throw Exception('Issue Report Repository Error: failed to delete issue report - ${e.toString()}');
     }
   }
 
@@ -172,7 +190,7 @@ class IssueReportRepository {
             .toList();
       });
     } catch (e) {
-      throw Exception('Error streaming issue reports: $e');
+      throw Exception('Issue Report Repository Error: failed to stream issue reports - ${e.toString()}');
     }
   }
 }

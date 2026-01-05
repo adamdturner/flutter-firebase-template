@@ -20,12 +20,13 @@ class AuthService {
 
       final data = response.data;
       if (data['error'] == true) {
-        throw Exception(data['message']);
+        throw Exception('Auth Service Error: ${data['message']}');
       }
-    } on FirebaseFunctionsException catch (e) {
-      throw Exception('FirebaseFunctionsException: ${e.message}');
     } catch (e) {
-      throw Exception('Error setting user role: $e');
+      if (e.toString().contains('Auth Service Error')) {
+        rethrow;
+      }
+      throw Exception('Auth Service Error: failed to set user role - ${e.toString()}');
     }
   }
 }

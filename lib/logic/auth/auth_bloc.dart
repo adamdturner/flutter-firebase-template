@@ -49,17 +49,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
 
       final uid = userCredential.user?.uid;
-      if (uid == null) throw Exception('User UID was null after signup');
+      if (uid == null) {
+        throw Exception('Auth BLoC Error: user UID was null after signup');
+      }
 
       await _authService.setUserRole(uid: uid, role: event.user.role);
 
       // Let authStateChanges stream trigger AuthAuthenticated state
-    } on FirebaseAuthException catch (e) {
-      emit(AuthFailure(error: e.message ?? 'Signup failed'));
-    } on FirebaseException catch (e) {
-      emit(AuthFailure(error: 'Firestore error: ${e.message}'));
     } catch (e) {
-      emit(AuthFailure(error: 'Unexpected error: $e'));
+      emit(AuthFailure(error: 'Auth BLoC Error: failed to sign up user - ${e.toString()}'));
     }
   }
 
@@ -73,10 +71,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } else {
         emit(AuthUnauthenticated());
       }
-    } on FirebaseAuthException catch (e) {
-      emit(AuthFailure(error: e.message ?? 'Sign-in failed'));
     } catch (e) {
-      emit(AuthFailure(error: e.toString()));
+      emit(AuthFailure(error: 'Auth BLoC Error: failed to sign in - ${e.toString()}'));
     }
   }
 
@@ -86,7 +82,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await _authRepository.signOut();
       emit(AuthUnauthenticated());
     } catch (e) {
-      emit(AuthFailure(error: e.toString()));
+      emit(AuthFailure(error: 'Auth BLoC Error: failed to sign out - ${e.toString()}'));
     }
   }
 
@@ -100,10 +96,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       await _authRepository.sendPasswordResetEmail(email: event.email);
       emit(AuthPasswordResetSent(email: event.email));
-    } on FirebaseAuthException catch (e) {
-      emit(AuthFailure(error: e.message ?? 'Failed to send password reset email'));
     } catch (e) {
-      emit(AuthFailure(error: e.toString()));
+      emit(AuthFailure(error: 'Auth BLoC Error: failed to send password reset email - ${e.toString()}'));
     }
   }
 

@@ -20,25 +20,34 @@ class AuthRepository {
     required String password,
     required UserModel user,
   }) async {
-    final email = user.email;
+    try {
+      final email = user.email;
 
-    final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+      final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-    final uid = userCredential.user?.uid;
-    if (uid == null) throw Exception('UID is null');
+      final uid = userCredential.user?.uid;
+      if (uid == null) {
+        throw Exception('Auth Repository Error: UID is null after user creation');
+      }
 
-    final userWithUid = user.copyWith(uid: uid);
+      final userWithUid = user.copyWith(uid: uid);
 
-    // Write to users collection with all user data
-    await _firestore.collection('users').doc(uid).set({
-      ...userWithUid.toMap(),
-      'createdAt': FieldValue.serverTimestamp(),
-    });
+      // Write to users collection with all user data
+      await _firestore.collection('users').doc(uid).set({
+        ...userWithUid.toMap(),
+        'createdAt': FieldValue.serverTimestamp(),
+      });
 
-    return userCredential;
+      return userCredential;
+    } catch (e) {
+      if (e.toString().contains('Auth Repository Error')) {
+        rethrow;
+      }
+      throw Exception('Auth Repository Error: failed to sign up user - ${e.toString()}');
+    }
   }
 
   Future<UserCredential> signIn({
@@ -53,7 +62,7 @@ class AuthRepository {
       
       // Ensure the user credential is valid
       if (userCredential.user == null) {
-        throw Exception('User credential is null after sign in');
+        throw Exception('Auth Repository Error: user credential is null after sign in');
       }
       // uncomment the code below to print the claims when the user logs in
       final user = _firebaseAuth.currentUser;
@@ -68,27 +77,31 @@ class AuthRepository {
       }
       
       return userCredential;
-
-
-    } on FirebaseAuthException {
-      rethrow;
     } catch (e) {
-      throw Exception('Failed to sign in: $e');
+      if (e.toString().contains('Auth Repository Error')) {
+        rethrow;
+      }
+      throw Exception('Auth Repository Error: failed to sign in - ${e.toString()}');
     }
   }
 
   /// Signs the user out of Firebase Auth.
   Future<void> signOut() async {
-    await _firebaseAuth.signOut();
+    try {
+      await _firebaseAuth.signOut();
+    } catch (e) {
+      throw Exception('Auth Repository Error: failed to sign out - ${e.toString()}');
+    }
   }
 
   Future<void> sendPasswordResetEmail({required String email}) async {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
-    } on FirebaseAuthException {
-      rethrow;
     } catch (e) {
-      throw Exception('Failed to send password reset email: $e');
+      if (e.toString().contains('Auth Repository Error')) {
+        rethrow;
+      }
+      throw Exception('Auth Repository Error: failed to send password reset email - ${e.toString()}');
     }
   }
 

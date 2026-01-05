@@ -1,128 +1,173 @@
-# Firebase Template Setup Guide
+# Flutter Firebase Template - Setup Guide
 
-Follow these steps to create a new Flutter + Firebase project using this template.
+Follow these steps to create a new Flutter + Firebase app using this template.
 
 ## Prerequisites
 
-- Flutter SDK installed ([Get Flutter](https://docs.flutter.dev/get-started/install))
-- Firebase CLI: `npm install -g firebase-tools`
-- Node.js 20+ (for Cloud Functions)
-- FlutterFire CLI: `dart pub global activate flutterfire_cli`
+Before you begin, ensure you have:
+
+- **Flutter SDK** - [Installation Guide](https://docs.flutter.dev/get-started/install)
+- **Node.js 20+** - For Cloud Functions ([Download](https://nodejs.org/))
+- **Firebase CLI** - Install globally:
+  ```bash
+  npm install -g firebase-tools
+  ```
+- **FlutterFire CLI** - Install globally:
+  ```bash
+  dart pub global activate flutterfire_cli
+  ```
+  > Add `~/.pub-cache/bin` to your PATH if not already done
 
 ## Step 1: Clone the Template
 
 ```bash
+# Clone into your new project directory
 git clone <your-template-repo-url> my-new-app
 cd my-new-app
-rm -rf .git  # Remove template git history
-git init     # Start fresh
+
+# Remove template git history and start fresh
+rm -rf .git
+git init
 ```
 
 ## Step 2: Create Firebase Project
 
-1. Go to [Firebase Console](https://console.firebase.google.com/)
+1. Open the [Firebase Console](https://console.firebase.google.com/)
 2. Click **Add Project**
-3. Enter your project name and click **Continue**
+3. Enter your project name (e.g., "My New App")
 4. (Optional) Enable Google Analytics
 5. Click **Create Project**
-6. **Upgrade to Blaze Plan** (Pay-as-you-go) for Cloud Functions
+6. **Important:** Upgrade to the **Blaze Plan** (Pay-as-you-go) to use Cloud Functions
+   - Go to **Project Settings → Usage and billing → Details & settings**
+   - Click **Modify plan** and select Blaze
 
 ## Step 3: Enable Firebase Services
 
-### Authentication
-1. Go to **Build → Authentication**
-2. Click **Get Started**
-3. Enable authentication methods:
-   - **Email/Password** - Toggle on
-   - **Google** - Toggle on, add support email
+### Enable Authentication
 
-### Firestore Database
+1. In Firebase Console, go to **Build → Authentication**
+2. Click **Get Started**
+3. Enable sign-in methods:
+   - **Email/Password** - Toggle on
+   - **Google** - Toggle on, then add a support email
+
+### Enable Firestore Database
+
 1. Go to **Build → Firestore Database**
 2. Click **Create Database**
-3. Select **Production mode** (rules are already in template)
-4. Choose location: **us-central1** (free tier)
+3. Choose **Start in production mode** (security rules are included in template)
+4. Select a Cloud Firestore location:
+   - Recommended: **us-central1** (best for free tier)
+   - Choose closest to your users
 
-### Cloud Storage
+### Enable Cloud Storage
+
 1. Go to **Build → Storage**
 2. Click **Get Started**
-3. Select **Production mode**
-4. Choose location: **us-central1** (free tier)
+3. Choose **Start in production mode** (security rules are included in template)
+4. Select storage location (use same location as Firestore)
 
-## Step 4: Configure Your Flutter App
+## Step 4: Connect Flutter App to Firebase
 
-Run the FlutterFire configuration tool to connect your app:
+Run the FlutterFire CLI to automatically configure your app:
 
 ```bash
-# This generates firebase_options.dart and platform configs
 flutterfire configure
-
-# Select your project when prompted
-# Select platforms: iOS, Android, Web, macOS (as needed)
 ```
 
-This creates:
+When prompted:
+- **Select your Firebase project** from the list
+- **Choose platforms** to support (iOS, Android, Web, macOS)
+
+This command generates:
 - `lib/firebase_options.dart` (gitignored)
 - `android/app/google-services.json` (gitignored)
 - `ios/Runner/GoogleService-Info.plist` (gitignored)
+- `macos/Runner/GoogleService-Info.plist` (gitignored, if macOS selected)
 
 ## Step 5: Install Dependencies
 
 ```bash
-# Flutter dependencies
+# Install Flutter packages
 flutter pub get
 
-# Cloud Functions dependencies
-cd functions && npm install && cd ..
+# Install Cloud Functions dependencies
+cd functions
+npm install
+cd ..
 ```
 
-## Step 6: Initialize Firebase Services
+## Step 6: Configure Firebase CLI
 
-Login and set your project:
+Authenticate and link your local project to Firebase:
 
 ```bash
-# Login to Firebase
+# Login to Firebase (opens browser)
 firebase login
 
-# Set your active project
+# Link this project to your Firebase project
 firebase use --add
-# Select your project and give it an alias (e.g., "default")
 ```
 
-## Step 7: Deploy to Firebase
+When prompted:
+- Select your Firebase project
+- Enter an alias (typically "default")
 
-Deploy Firestore rules, Storage rules, and Cloud Functions:
+This creates `.firebaserc` (gitignored) with your project ID.
+
+## Step 7: Deploy Firebase Configuration
+
+Deploy security rules and Cloud Functions to your Firebase project:
 
 ```bash
-# Deploy everything
+# Build Cloud Functions
+cd functions
+npm run build
+cd ..
+
+# Deploy all Firebase services
 firebase deploy
-
-# Or deploy individually:
-firebase deploy --only firestore:rules
-firebase deploy --only storage:rules
-firebase deploy --only functions
 ```
 
-## Step 8: Test Your Setup
-
-### Test Cloud Functions
+Alternatively, deploy services individually:
 ```bash
-# After deploy, you'll get a URL like:
-# https://us-central1-YOUR-PROJECT.cloudfunctions.net/helloWorld
-
-curl https://YOUR-FUNCTION-URL/helloWorld
-# Should return: "Hello from Firebase!"
+firebase deploy --only firestore:rules  # Firestore security rules
+firebase deploy --only storage:rules    # Storage security rules
+firebase deploy --only functions        # Cloud Functions
 ```
 
-### Test Flutter App
+## Step 8: Verify Setup
+
+### Test the Flutter App
+
 ```bash
 flutter run
 ```
 
-## 🔒 Security Rules
+The app should launch successfully and connect to Firebase.
 
-The template includes **production-ready security rules** that require authentication:
+### Test Cloud Functions
 
-### Firestore Rules (`firestore.rules`)
+After deployment, Firebase will provide URLs for your functions:
+```
+https://us-central1-YOUR-PROJECT-ID.cloudfunctions.net/helloWorld
+```
+
+Test the example function:
+```bash
+curl https://YOUR-REGION-YOUR-PROJECT-ID.cloudfunctions.net/helloWorld
+```
+
+Expected response: `"Hello from Firebase!"`
+
+## 🔒 Understanding Security Rules
+
+This template includes **production-ready security rules** that require user authentication.
+
+### Firestore Rules
+
+File: `firestore.rules`
+
 ```javascript
 rules_version = '2';
 service cloud.firestore {
@@ -133,9 +178,14 @@ service cloud.firestore {
   }
 }
 ```
-Users can only access their own documents in the `/users/{userId}` collection.
 
-### Storage Rules (`storage.rules`)
+- Users can only read/write documents in `/users/{userId}` where `userId` matches their auth UID
+- **Customize this** based on your app's data structure
+
+### Storage Rules
+
+File: `storage.rules`
+
 ```javascript
 rules_version = '2';
 service firebase.storage {
@@ -146,37 +196,70 @@ service firebase.storage {
   }
 }
 ```
-Users can only access files under their own `/users/{userId}/` path.
 
-**Customize these rules** based on your app's data structure and access patterns.
+- Users can only access files under `/users/{userId}/`
+- **Customize this** based on your storage structure
 
-## 🎉 You're Done!
+### Modifying Rules
 
-Your Flutter + Firebase project is ready. Start building!
+1. Edit `firestore.rules` or `storage.rules` locally
+2. Deploy changes:
+   ```bash
+   firebase deploy --only firestore:rules
+   firebase deploy --only storage:rules
+   ```
 
-## Troubleshooting
+## 🎉 Setup Complete!
 
-**"Firebase CLI not found"**
+Your Flutter + Firebase project is ready. Next steps:
+
+1. Review the [README.md](README.md) for architecture and coding standards
+2. Check [lib/core/STYLING_GUIDE.md](lib/core/STYLING_GUIDE.md) for UI guidelines
+3. Start building your app!
+
+## 🐛 Troubleshooting
+
+### "Firebase CLI not found"
 ```bash
 npm install -g firebase-tools
 ```
 
-**"flutterfire: command not found"**
+### "flutterfire: command not found"
 ```bash
 dart pub global activate flutterfire_cli
-# Add to PATH: ~/.pub-cache/bin
+# Ensure ~/.pub-cache/bin is in your PATH
+export PATH="$PATH":"$HOME/.pub-cache/bin"  # Add to ~/.zshrc or ~/.bashrc
 ```
 
-**"Deployment failed"**
-- Ensure you're on Blaze (Pay-as-you-go) plan
-- Check `firebase login` is authenticated
-- Verify `firebase use` shows correct project
+### "Deployment failed" or "Billing account required"
+- Verify you've upgraded to the **Blaze Plan** (required for Cloud Functions)
+- Run `firebase login` to re-authenticate
+- Check `firebase use` shows the correct project
 
-**"Cloud Functions build error"**
+### "Cloud Functions build error"
 ```bash
 cd functions
+rm -rf node_modules package-lock.json
 npm install
 npm run build
 cd ..
 firebase deploy --only functions
 ```
+
+### "FlutterFire configuration failed"
+- Ensure Firebase project exists in Console
+- Verify you've enabled required services (Auth, Firestore, Storage)
+- Try running `firebase login --reauth`
+
+### "App won't connect to Firebase"
+- Check that `firebase_options.dart` was generated
+- Verify platform-specific config files exist:
+  - Android: `android/app/google-services.json`
+  - iOS: `ios/Runner/GoogleService-Info.plist`
+- Rebuild the app completely: `flutter clean && flutter pub get && flutter run`
+
+### Need More Help?
+
+- [Firebase Documentation](https://firebase.google.com/docs)
+- [FlutterFire Documentation](https://firebase.flutter.dev/)
+- [Flutter Documentation](https://docs.flutter.dev/)

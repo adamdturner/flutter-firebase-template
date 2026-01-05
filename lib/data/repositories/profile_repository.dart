@@ -18,11 +18,14 @@ class ProfileRepository {
     try {
       final userDoc = await _firestore.collection('users').doc(userId).get();
       if (!userDoc.exists) {
-        throw Exception('User not found in users collection');
+        throw Exception('Profile Repository Error: user not found in users collection');
       }
       return userDoc.data()!['role'] as String;
     } catch (e) {
-      throw Exception('Error getting user role: $e');
+      if (e.toString().contains('Profile Repository Error')) {
+        rethrow;
+      }
+      throw Exception('Profile Repository Error: failed to get user role - ${e.toString()}');
     }
   }
 
@@ -32,12 +35,15 @@ class ProfileRepository {
       final userDoc = await _firestore.collection('users').doc(userId).get();
       
       if (!userDoc.exists) {
-        throw Exception('User not found in users collection');
+        throw Exception('Profile Repository Error: user not found in users collection');
       }
       
       return UserModel.fromMap(userDoc.data()!, uid: userId);
     } catch (e) {
-      throw Exception('Error fetching user: $e');
+      if (e.toString().contains('Profile Repository Error')) {
+        rethrow;
+      }
+      throw Exception('Profile Repository Error: failed to fetch user - ${e.toString()}');
     }
   }
 
@@ -48,7 +54,7 @@ class ProfileRepository {
   }) async {
     try {
       if (updates == null || updates.isEmpty) {
-        throw Exception('No fields to update');
+        throw Exception('Profile Repository Error: no fields to update');
       }
 
       await _firestore
@@ -56,46 +62,59 @@ class ProfileRepository {
           .doc(userId)
           .update(updates);
     } catch (e) {
-      throw Exception('Error updating profile: $e');
+      if (e.toString().contains('Profile Repository Error')) {
+        rethrow;
+      }
+      throw Exception('Profile Repository Error: failed to update profile - ${e.toString()}');
     }
   }
 
   /// Stream user data for real-time updates
   Stream<UserModel> streamUser(String userId) {
-    return _firestore
-        .collection('users')
-        .doc(userId)
-        .snapshots()
-        .map((snapshot) {
-      if (!snapshot.exists) {
-        throw Exception('User not found in users collection');
-      }
-      
-      return UserModel.fromMap(snapshot.data()!, uid: userId);
-    });
+    try {
+      return _firestore
+          .collection('users')
+          .doc(userId)
+          .snapshots()
+          .map((snapshot) {
+        if (!snapshot.exists) {
+          throw Exception('Profile Repository Error: user not found in users collection');
+        }
+        
+        return UserModel.fromMap(snapshot.data()!, uid: userId);
+      });
+    } catch (e) {
+      throw Exception('Profile Repository Error: failed to stream user - ${e.toString()}');
+    }
   }
 
   /// Get current user from Firebase Auth
   Future<UserModel?> getCurrentUser() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return null;
-    
     try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return null;
+      
       return await fetchUser(user.uid);
     } catch (e) {
-      return null;
+      if (e.toString().contains('Profile Repository Error')) {
+        rethrow;
+      }
+      throw Exception('Profile Repository Error: failed to get current user - ${e.toString()}');
     }
   }
 
   /// Get current user role
   Future<String?> getCurrentUserRole() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return null;
-    
     try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return null;
+      
       return await getUserRole(user.uid);
     } catch (e) {
-      return null;
+      if (e.toString().contains('Profile Repository Error')) {
+        rethrow;
+      }
+      throw Exception('Profile Repository Error: failed to get current user role - ${e.toString()}');
     }
   }
 }

@@ -26,7 +26,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         _lastFetchUserId = event.userId;
         emit(UserLoaded(user));
       } catch (e) {
-        emit(UserFailure(e.toString()));
+        emit(UserFailure('User BLoC Error: failed to fetch user - ${e.toString()}'));
       }
     });
 
@@ -39,7 +39,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         _lastFetchUserId = event.userId;
         emit(UserLoaded(user));
       } catch (e) {
-        emit(UserFailure(e.toString()));
+        emit(UserFailure('User BLoC Error: failed to refresh user - ${e.toString()}'));
       }
     });
 

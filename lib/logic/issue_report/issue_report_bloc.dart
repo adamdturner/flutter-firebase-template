@@ -16,7 +16,7 @@ class IssueReportBloc extends Bloc<IssueReportEvent, IssueReportState> {
         final issueId = await issueReportRepository.submitIssueReport(event.issueReport);
         emit(IssueReportSubmitted(issueId: issueId));
       } catch (e) {
-        emit(IssueReportSubmissionFailure(error: e.toString()));
+        emit(IssueReportSubmissionFailure(error: 'Issue Report BLoC Error: failed to submit issue report - ${e.toString()}'));
       }
     });
 
@@ -27,7 +27,7 @@ class IssueReportBloc extends Bloc<IssueReportEvent, IssueReportState> {
         final issueReports = await issueReportRepository.fetchUserIssueReports(event.userId);
         emit(IssueReportsLoaded(issueReports: issueReports));
       } catch (e) {
-        emit(IssueReportsLoadFailure(error: e.toString()));
+        emit(IssueReportsLoadFailure(error: 'Issue Report BLoC Error: failed to fetch user issue reports - ${e.toString()}'));
       }
     });
 
@@ -42,7 +42,7 @@ class IssueReportBloc extends Bloc<IssueReportEvent, IssueReportState> {
         );
         emit(IssueReportsLoaded(issueReports: issueReports));
       } catch (e) {
-        emit(IssueReportsLoadFailure(error: e.toString()));
+        emit(IssueReportsLoadFailure(error: 'Issue Report BLoC Error: failed to fetch all issue reports - ${e.toString()}'));
       }
     });
 
@@ -58,7 +58,7 @@ class IssueReportBloc extends Bloc<IssueReportEvent, IssueReportState> {
         );
         emit(IssueStatusUpdated());
       } catch (e) {
-        emit(IssueStatusUpdateFailure(error: e.toString()));
+        emit(IssueStatusUpdateFailure(error: 'Issue Report BLoC Error: failed to update issue status - ${e.toString()}'));
       }
     });
 

@@ -18,7 +18,7 @@ class ImageUploadService {
       );
       return image;
     } catch (e) {
-      throw Exception('Error picking image: $e');
+      throw Exception('Image Upload Service Error: failed to pick image from gallery - ${e.toString()}');
     }
   }
 
@@ -33,7 +33,7 @@ class ImageUploadService {
       );
       return image;
     } catch (e) {
-      throw Exception('Error taking photo: $e');
+      throw Exception('Image Upload Service Error: failed to take photo - ${e.toString()}');
     }
   }
 
@@ -82,7 +82,10 @@ class ImageUploadService {
 
       return downloadUrl;
     } catch (e) {
-      throw Exception('Error uploading image: $e');
+      if (e.toString().contains('Image Upload Service Error')) {
+        rethrow;
+      }
+      throw Exception('Image Upload Service Error: failed to upload issue screenshot - ${e.toString()}');
     }
   }
 
@@ -92,7 +95,10 @@ class ImageUploadService {
       final Reference ref = _storage.refFromURL(downloadUrl);
       await ref.delete();
     } catch (e) {
-      throw Exception('Error deleting image: $e');
+      if (e.toString().contains('Image Upload Service Error')) {
+        rethrow;
+      }
+      throw Exception('Image Upload Service Error: failed to delete issue screenshot - ${e.toString()}');
     }
   }
 
@@ -103,21 +109,28 @@ class ImageUploadService {
     required String issueId,
     Function(int current, int total)? onProgress,
   }) async {
-    final List<String> downloadUrls = [];
+    try {
+      final List<String> downloadUrls = [];
 
-    for (int i = 0; i < images.length; i++) {
-      onProgress?.call(i + 1, images.length);
-      
-      final String url = await uploadIssueScreenshot(
-        image: images[i],
-        userId: userId,
-        issueId: issueId,
-      );
-      
-      downloadUrls.add(url);
+      for (int i = 0; i < images.length; i++) {
+        onProgress?.call(i + 1, images.length);
+        
+        final String url = await uploadIssueScreenshot(
+          image: images[i],
+          userId: userId,
+          issueId: issueId,
+        );
+        
+        downloadUrls.add(url);
+      }
+
+      return downloadUrls;
+    } catch (e) {
+      if (e.toString().contains('Image Upload Service Error')) {
+        rethrow;
+      }
+      throw Exception('Image Upload Service Error: failed to upload multiple screenshots - ${e.toString()}');
     }
-
-    return downloadUrls;
   }
 
   /// Upload profile image to Firebase Storage and return the download URL
@@ -164,7 +177,10 @@ class ImageUploadService {
 
       return downloadUrl;
     } catch (e) {
-      throw Exception('Error uploading profile image: $e');
+      if (e.toString().contains('Image Upload Service Error')) {
+        rethrow;
+      }
+      throw Exception('Image Upload Service Error: failed to upload profile image - ${e.toString()}');
     }
   }
 
@@ -174,7 +190,10 @@ class ImageUploadService {
       final Reference ref = _storage.refFromURL(downloadUrl);
       await ref.delete();
     } catch (e) {
-      throw Exception('Error deleting profile image: $e');
+      if (e.toString().contains('Image Upload Service Error')) {
+        rethrow;
+      }
+      throw Exception('Image Upload Service Error: failed to delete profile image - ${e.toString()}');
     }
   }
 }

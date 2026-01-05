@@ -28,14 +28,21 @@ class UserRepository {
     CollectionReference<Map<String, dynamic>> collection, 
     String userID
   ) async {
-    final userDoc = await collection.doc(userID).get();
-    
-    if (!userDoc.exists) {
-      throw Exception('User not found in users collection');
+    try {
+      final userDoc = await collection.doc(userID).get();
+      
+      if (!userDoc.exists) {
+        throw Exception('User Repository Error: user not found in users collection');
+      }
+      
+      final data = userDoc.data()!;
+      return UserModel.fromMap(data, uid: userID);
+    } catch (e) {
+      if (e.toString().contains('User Repository Error')) {
+        rethrow;
+      }
+      throw Exception('User Repository Error: failed to fetch user from collection - ${e.toString()}');
     }
-    
-    final data = userDoc.data()!;
-    return UserModel.fromMap(data, uid: userID);
   }
 
 
@@ -44,7 +51,10 @@ class UserRepository {
       final userAccountsCollection = _getCollection('users');
       return await _fetchUserDataFromCollection(userAccountsCollection, userID);
     } catch (e) {
-      throw Exception('Error fetching user data: $e');
+      if (e.toString().contains('User Repository Error')) {
+        rethrow;
+      }
+      throw Exception('User Repository Error: failed to fetch user data - ${e.toString()}');
     }
   }
 
@@ -55,7 +65,7 @@ class UserRepository {
       final userDoc = await _getCollection('users').doc(userId).get();
       
       if (!userDoc.exists) {
-        throw Exception('User not found in users collection');
+        throw Exception('User Repository Error: user not found in users collection');
       }
       
       final data = userDoc.data();
@@ -72,14 +82,26 @@ class UserRepository {
         return email ?? 'Unknown User';
       }
     } catch (e) {
-      return 'Unknown';
+      if (e.toString().contains('User Repository Error')) {
+        rethrow;
+      }
+      throw Exception('User Repository Error: failed to fetch user display name - ${e.toString()}');
     }
   }
 
   Future<Map<String, dynamic>?> fetchUserFields(String uid) async {
-    final userDoc = await _getCollection('users').doc(uid).get();
-    if (!userDoc.exists) return null;
-    return userDoc.data();
+    try {
+      final userDoc = await _getCollection('users').doc(uid).get();
+      if (!userDoc.exists) {
+        throw Exception('User Repository Error: user not found in users collection');
+      }
+      return userDoc.data();
+    } catch (e) {
+      if (e.toString().contains('User Repository Error')) {
+        rethrow;
+      }
+      throw Exception('User Repository Error: failed to fetch user fields - ${e.toString()}');
+    }
   }
 
 
@@ -91,14 +113,17 @@ class UserRepository {
   }) async {
     try {
       if (updates == null || updates.isEmpty) {
-        throw Exception('No fields to update');
+        throw Exception('User Repository Error: no fields to update');
       }
 
       await _getCollection('users')
           .doc(userId)
           .update(updates);
     } catch (e) {
-      throw Exception('Error updating profile: $e');
+      if (e.toString().contains('User Repository Error')) {
+        rethrow;
+      }
+      throw Exception('User Repository Error: failed to update profile - ${e.toString()}');
     }
   }
 

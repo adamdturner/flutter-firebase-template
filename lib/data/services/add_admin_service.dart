@@ -36,7 +36,7 @@ class AddAdminService {
           .get();
 
       if (userQuery.docs.isEmpty) {
-        throw Exception('User with email $email not found');
+        throw Exception('Add Admin Service Error: user with email $email not found');
       }
 
       final userDoc = userQuery.docs.first;
@@ -58,7 +58,10 @@ class AddAdminService {
       debugPrint('✅ Successfully added $email as admin');
     } catch (e) {
       debugPrint('❌ Error adding user as admin: $e');
-      rethrow;
+      if (e.toString().contains('Add Admin Service Error')) {
+        rethrow;
+      }
+      throw Exception('Add Admin Service Error: failed to add user as admin - ${e.toString()}');
     }
   }
 
@@ -107,7 +110,10 @@ class AddAdminService {
       debugPrint('✅ Created sandbox user document for $userId');
     } catch (e) {
       debugPrint('❌ Error creating sandbox user document: $e');
-      rethrow;
+      if (e.toString().contains('Add Admin Service Error')) {
+        rethrow;
+      }
+      throw Exception('Add Admin Service Error: failed to create sandbox user document - ${e.toString()}');
     }
   }
 
@@ -125,7 +131,10 @@ class AddAdminService {
       }).toList();
     } catch (e) {
       debugPrint('❌ Error getting all users: $e');
-      rethrow;
+      if (e.toString().contains('Add Admin Service Error')) {
+        rethrow;
+      }
+      throw Exception('Add Admin Service Error: failed to get all users - ${e.toString()}');
     }
   }
 
@@ -143,7 +152,10 @@ class AddAdminService {
       }).toList();
     } catch (e) {
       debugPrint('❌ Error getting all admins: $e');
-      rethrow;
+      if (e.toString().contains('Add Admin Service Error')) {
+        rethrow;
+      }
+      throw Exception('Add Admin Service Error: failed to get all admins - ${e.toString()}');
     }
   }
 
@@ -158,7 +170,10 @@ class AddAdminService {
       return doc.exists;
     } catch (e) {
       debugPrint('❌ Error checking sandbox database: $e');
-      return false;
+      if (e.toString().contains('Add Admin Service Error')) {
+        rethrow;
+      }
+      throw Exception('Add Admin Service Error: failed to check sandbox database - ${e.toString()}');
     }
   }
 }
