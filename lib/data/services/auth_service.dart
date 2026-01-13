@@ -1,4 +1,5 @@
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_firebase_template/data/services/service_config.dart';
 
 class AuthService {
@@ -23,6 +24,9 @@ class AuthService {
         throw Exception('Auth Service Error: ${data['message']}');
       }
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Auth Service Error: failed to set user role - $e');
+      }
       if (e.toString().contains('Auth Service Error')) {
         rethrow;
       }

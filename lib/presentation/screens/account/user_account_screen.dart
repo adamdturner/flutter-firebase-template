@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_firebase_template/presentation/widgets/widgets.dart';
 
 import 'package:flutter_firebase_template/core/design_system.dart';
@@ -34,19 +33,19 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
     
     // Only fetch if we don't have user data loaded
     if (currentState is! UserLoaded) {
-      final currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser != null) {
-        userBloc.add(FetchUserRequested(currentUser.uid));
+      final authState = context.read<AuthBloc>().state;
+      if (authState is AuthAuthenticated) {
+        userBloc.add(FetchUserRequested(authState.user.uid));
       }
     }
   }
 
   Future<void> _onRefresh() async {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser == null) return;
+    final authState = context.read<AuthBloc>().state;
+    if (authState is! AuthAuthenticated) return;
 
     final userBloc = context.read<UserBloc>();
-    userBloc.add(RefreshUserRequested(currentUser.uid));
+    userBloc.add(RefreshUserRequested(authState.user.uid));
 
     await userBloc.stream.firstWhere(
       (state) => state is UserLoaded || state is UserFailure,
@@ -199,6 +198,11 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
                   SizedBox(height: AppDesignSystem.spacing12),
                   _buildButtonCard(context, [
                     AppNavigationButton(
+                      text: "View Issue Reports",
+                      icon: Icons.report_outlined,
+                      onPressed: () => Navigator.pushNamed(context, '/admin_issue_reports'),
+                    ),
+                    AppNavigationButton(
                       text: "Manage Users",
                       icon: Icons.people_outline,
                       onPressed: () {
@@ -230,6 +234,19 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
                   ]),
                 ],
               ],
+
+              SizedBox(height: AppDesignSystem.spacing24),
+
+              // Support Section
+              _buildSectionHeader(context, 'Support', Icons.help_outline),
+              SizedBox(height: AppDesignSystem.spacing12),
+              _buildButtonCard(context, [
+                AppNavigationButton(
+                  text: "Report Issue",
+                  icon: Icons.bug_report_outlined,
+                  onPressed: () => Navigator.pushNamed(context, '/report_issue'),
+                ),
+              ]),
 
               SizedBox(height: AppDesignSystem.spacing24),
 
@@ -307,11 +324,11 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
               text: "Try Again",
               icon: Icons.refresh,
               onPressed: () {
-                final authUser = FirebaseAuth.instance.currentUser;
-                if (authUser != null) {
+                final authState = context.read<AuthBloc>().state;
+                if (authState is AuthAuthenticated) {
                   context
                       .read<UserBloc>()
-                      .add(FetchUserRequested(authUser.uid));
+                      .add(FetchUserRequested(authState.user.uid));
                 }
               },
             ),
@@ -666,12 +683,12 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
       
       // Sign out the user first and wait for it to complete
       if (mounted) {
-        context.read<AuthBloc>().add(AuthSignOutRequested());
+        final authBloc = context.read<AuthBloc>();
+        authBloc.add(AuthSignOutRequested());
         
-        // Wait for the sign-out to complete by listening to Firebase Auth
-        await FirebaseAuth.instance.authStateChanges().firstWhere(
-          (user) => user == null,
-          orElse: () => null,
+        // Wait for the sign-out to complete by listening to AuthBloc
+        await authBloc.stream.firstWhere(
+          (state) => state is AuthUnauthenticated,
         );
       }
       

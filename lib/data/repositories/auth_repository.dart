@@ -43,6 +43,9 @@ class AuthRepository {
 
       return userCredential;
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Auth Repository Error: failed to sign up user - $e');
+      }
       if (e.toString().contains('Auth Repository Error')) {
         rethrow;
       }
@@ -64,7 +67,7 @@ class AuthRepository {
       if (userCredential.user == null) {
         throw Exception('Auth Repository Error: user credential is null after sign in');
       }
-      // uncomment the code below to print the claims when the user logs in
+      // Print the claims when the user logs in (debug only)
       final user = _firebaseAuth.currentUser;
       if (user != null) {
         // Force a token refresh to ensure you have the latest custom claims
@@ -73,11 +76,16 @@ class AuthRepository {
         final idTokenResult = await user.getIdTokenResult();
         final claims = idTokenResult.claims;
 
-        debugPrint('✅ Custom claims for ${user.uid}: $claims');
+        if (kDebugMode) {
+          debugPrint('✅ Custom claims for ${user.uid}: $claims');
+        }
       }
       
       return userCredential;
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Auth Repository Error: failed to sign in - $e');
+      }
       if (e.toString().contains('Auth Repository Error')) {
         rethrow;
       }
@@ -90,6 +98,9 @@ class AuthRepository {
     try {
       await _firebaseAuth.signOut();
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Auth Repository Error: failed to sign out - $e');
+      }
       throw Exception('Auth Repository Error: failed to sign out - ${e.toString()}');
     }
   }
@@ -98,6 +109,9 @@ class AuthRepository {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Auth Repository Error: failed to send password reset email - $e');
+      }
       if (e.toString().contains('Auth Repository Error')) {
         rethrow;
       }

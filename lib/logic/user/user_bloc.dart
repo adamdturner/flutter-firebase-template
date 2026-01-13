@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_firebase_template/data/repositories/user_repository.dart';
 import 'package:flutter_firebase_template/logic/user/user_event.dart';
@@ -26,6 +27,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         _lastFetchUserId = event.userId;
         emit(UserLoaded(user));
       } catch (e) {
+        if (kDebugMode) {
+          debugPrint('❌ User BLoC Error: failed to fetch user - $e');
+        }
         emit(UserFailure('User BLoC Error: failed to fetch user - ${e.toString()}'));
       }
     });
@@ -39,6 +43,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         _lastFetchUserId = event.userId;
         emit(UserLoaded(user));
       } catch (e) {
+        if (kDebugMode) {
+          debugPrint('❌ User BLoC Error: failed to refresh user - $e');
+        }
         emit(UserFailure('User BLoC Error: failed to refresh user - ${e.toString()}'));
       }
     });

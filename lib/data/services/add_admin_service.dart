@@ -55,9 +55,13 @@ class AddAdminService {
       // Step 4: Create a minimal user document in the sandbox database
       await _createSandboxUserDocument(userId: userId, userData: userData);
 
-      debugPrint('✅ Successfully added $email as admin');
+      if (kDebugMode) {
+        debugPrint('✅ Successfully added $email as admin');
+      }
     } catch (e) {
-      debugPrint('❌ Error adding user as admin: $e');
+      if (kDebugMode) {
+        debugPrint('❌ Add Admin Service Error: failed to add user as admin - $e');
+      }
       if (e.toString().contains('Add Admin Service Error')) {
         rethrow;
       }
@@ -83,7 +87,9 @@ class AddAdminService {
           .get();
 
       if (existingDoc.exists) {
-        debugPrint('⚠️ User already exists in sandbox database, updating role only');
+        if (kDebugMode) {
+          debugPrint('⚠️ User already exists in sandbox database, updating role only');
+        }
         await _sandboxFirestore
             .collection('users')
             .doc(userId)
@@ -107,9 +113,13 @@ class AddAdminService {
           .doc(userId)
           .set(sandboxUserData);
 
-      debugPrint('✅ Created sandbox user document for $userId');
+      if (kDebugMode) {
+        debugPrint('✅ Created sandbox user document for $userId');
+      }
     } catch (e) {
-      debugPrint('❌ Error creating sandbox user document: $e');
+      if (kDebugMode) {
+        debugPrint('❌ Add Admin Service Error: failed to create sandbox user document - $e');
+      }
       if (e.toString().contains('Add Admin Service Error')) {
         rethrow;
       }
@@ -130,7 +140,9 @@ class AddAdminService {
         return UserModel.fromMap(doc.data(), uid: doc.id);
       }).toList();
     } catch (e) {
-      debugPrint('❌ Error getting all users: $e');
+      if (kDebugMode) {
+        debugPrint('❌ Add Admin Service Error: failed to get all users - $e');
+      }
       if (e.toString().contains('Add Admin Service Error')) {
         rethrow;
       }
@@ -151,7 +163,9 @@ class AddAdminService {
         return UserModel.fromMap(doc.data(), uid: doc.id);
       }).toList();
     } catch (e) {
-      debugPrint('❌ Error getting all admins: $e');
+      if (kDebugMode) {
+        debugPrint('❌ Add Admin Service Error: failed to get all admins - $e');
+      }
       if (e.toString().contains('Add Admin Service Error')) {
         rethrow;
       }
@@ -169,7 +183,9 @@ class AddAdminService {
       
       return doc.exists;
     } catch (e) {
-      debugPrint('❌ Error checking sandbox database: $e');
+      if (kDebugMode) {
+        debugPrint('❌ Add Admin Service Error: failed to check sandbox database - $e');
+      }
       if (e.toString().contains('Add Admin Service Error')) {
         rethrow;
       }

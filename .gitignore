@@ -59,6 +59,19 @@ GoogleService-Info.plist
 ios/Runner/GoogleService-Info.plist
 macos/Runner/GoogleService-Info.plist
 
+# iOS generated files (contain local machine paths)
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Flutter/ephemeral/
+
+# CocoaPods (regenerated via pod install)
+ios/Pods/
+ios/Podfile.lock
+
+# Xcode user-specific settings
+ios/**/xcuserdata/
+**/xcuserdata/
+
 # Firebase CLI
 .firebaserc
 firebase-debug.log

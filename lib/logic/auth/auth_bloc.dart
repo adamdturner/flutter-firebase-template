@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_firebase_template/data/services/auth_service.dart';
@@ -57,6 +58,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       // Let authStateChanges stream trigger AuthAuthenticated state
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Auth BLoC Error: failed to sign up user - $e');
+      }
       emit(AuthFailure(error: 'Auth BLoC Error: failed to sign up user - ${e.toString()}'));
     }
   }
@@ -72,6 +76,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthUnauthenticated());
       }
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Auth BLoC Error: failed to sign in - $e');
+      }
       emit(AuthFailure(error: 'Auth BLoC Error: failed to sign in - ${e.toString()}'));
     }
   }
@@ -82,6 +89,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await _authRepository.signOut();
       emit(AuthUnauthenticated());
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Auth BLoC Error: failed to sign out - $e');
+      }
       emit(AuthFailure(error: 'Auth BLoC Error: failed to sign out - ${e.toString()}'));
     }
   }
@@ -97,6 +107,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await _authRepository.sendPasswordResetEmail(email: event.email);
       emit(AuthPasswordResetSent(email: event.email));
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Auth BLoC Error: failed to send password reset email - $e');
+      }
       emit(AuthFailure(error: 'Auth BLoC Error: failed to send password reset email - ${e.toString()}'));
     }
   }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 
 import '../data/repositories/auth_repository.dart';
@@ -15,6 +14,10 @@ import '../logic/user/user_event.dart';
 import '../logic/user/user_state.dart';
 import '../logic/issue_report/issue_report_bloc.dart';
 import '../logic/navigation/navigation_bloc.dart';
+import '../logic/admin/admin_bloc.dart';
+import '../logic/image_picker/image_picker_cubit.dart';
+import '../data/services/add_admin_service.dart';
+import '../data/services/image_upload_service.dart';
 
 /// Composition root for authenticated-only providers.
 ///
@@ -52,6 +55,13 @@ class AuthenticatedProviders extends StatelessWidget {
             ),
             Provider<IssueReportRepository>(
               create: (_) => IssueReportRepository(envDb: envDb),
+            ),
+            // Service providers
+            Provider<AddAdminService>(
+              create: (_) => AddAdminService(),
+            ),
+            Provider<ImageUploadService>(
+              create: (_) => ImageUploadService(),
             ),
           ],
           child: _AuthenticatedBlocs(
@@ -92,10 +102,7 @@ class _AuthenticatedBlocs extends StatelessWidget {
               userRepository: context.read<UserRepository>(),
             );
             // Fetch user data immediately when bloc is created
-            final currentUser = FirebaseAuth.instance.currentUser;
-            if (currentUser != null) {
-              bloc.add(FetchUserRequested(currentUser.uid));
-            }
+            bloc.add(FetchUserRequested(uid));
             return bloc;
           },
         ),
@@ -108,6 +115,18 @@ class _AuthenticatedBlocs extends StatelessWidget {
         // Navigation bloc for app navigation state
         BlocProvider<NavigationBloc>(
           create: (_) => NavigationBloc(),
+        ),
+        // Admin bloc for admin user management
+        BlocProvider<AdminBloc>(
+          create: (context) => AdminBloc(
+            addAdminService: context.read<AddAdminService>(),
+          ),
+        ),
+        // Image picker cubit for image selection and upload
+        BlocProvider<ImagePickerCubit>(
+          create: (context) => ImagePickerCubit(
+            imageUploadService: context.read<ImageUploadService>(),
+          ),
         ),
       ],
       child: _AuthenticatedListeners(child: child),

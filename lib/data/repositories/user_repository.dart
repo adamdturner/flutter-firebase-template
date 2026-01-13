@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_firebase_template/data/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_firebase_template/data/repositories/repository_utils.dart';
@@ -38,6 +39,9 @@ class UserRepository {
       final data = userDoc.data()!;
       return UserModel.fromMap(data, uid: userID);
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ User Repository Error: failed to fetch user from collection - $e');
+      }
       if (e.toString().contains('User Repository Error')) {
         rethrow;
       }
@@ -51,6 +55,9 @@ class UserRepository {
       final userAccountsCollection = _getCollection('users');
       return await _fetchUserDataFromCollection(userAccountsCollection, userID);
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ User Repository Error: failed to fetch user data - $e');
+      }
       if (e.toString().contains('User Repository Error')) {
         rethrow;
       }
@@ -82,6 +89,9 @@ class UserRepository {
         return email ?? 'Unknown User';
       }
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ User Repository Error: failed to fetch user display name - $e');
+      }
       if (e.toString().contains('User Repository Error')) {
         rethrow;
       }
@@ -97,6 +107,9 @@ class UserRepository {
       }
       return userDoc.data();
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ User Repository Error: failed to fetch user fields - $e');
+      }
       if (e.toString().contains('User Repository Error')) {
         rethrow;
       }
@@ -120,6 +133,9 @@ class UserRepository {
           .doc(userId)
           .update(updates);
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ User Repository Error: failed to update profile - $e');
+      }
       if (e.toString().contains('User Repository Error')) {
         rethrow;
       }

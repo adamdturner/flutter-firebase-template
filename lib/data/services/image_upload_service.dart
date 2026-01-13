@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ImageUploadService {
   final FirebaseStorage _storage = FirebaseStorage.instance;
@@ -18,6 +18,9 @@ class ImageUploadService {
       );
       return image;
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Image Upload Service Error: failed to pick image from gallery - $e');
+      }
       throw Exception('Image Upload Service Error: failed to pick image from gallery - ${e.toString()}');
     }
   }
@@ -33,6 +36,9 @@ class ImageUploadService {
       );
       return image;
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Image Upload Service Error: failed to take photo - $e');
+      }
       throw Exception('Image Upload Service Error: failed to take photo - ${e.toString()}');
     }
   }
@@ -82,6 +88,9 @@ class ImageUploadService {
 
       return downloadUrl;
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Image Upload Service Error: failed to upload issue screenshot - $e');
+      }
       if (e.toString().contains('Image Upload Service Error')) {
         rethrow;
       }
@@ -95,6 +104,9 @@ class ImageUploadService {
       final Reference ref = _storage.refFromURL(downloadUrl);
       await ref.delete();
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Image Upload Service Error: failed to delete issue screenshot - $e');
+      }
       if (e.toString().contains('Image Upload Service Error')) {
         rethrow;
       }
@@ -126,6 +138,9 @@ class ImageUploadService {
 
       return downloadUrls;
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Image Upload Service Error: failed to upload multiple screenshots - $e');
+      }
       if (e.toString().contains('Image Upload Service Error')) {
         rethrow;
       }
@@ -177,6 +192,9 @@ class ImageUploadService {
 
       return downloadUrl;
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Image Upload Service Error: failed to upload profile image - $e');
+      }
       if (e.toString().contains('Image Upload Service Error')) {
         rethrow;
       }
@@ -190,6 +208,9 @@ class ImageUploadService {
       final Reference ref = _storage.refFromURL(downloadUrl);
       await ref.delete();
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Image Upload Service Error: failed to delete profile image - $e');
+      }
       if (e.toString().contains('Image Upload Service Error')) {
         rethrow;
       }

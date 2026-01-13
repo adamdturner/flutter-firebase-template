@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_firebase_template/logic/issue_report/issue_report_event.dart';
 import 'package:flutter_firebase_template/logic/issue_report/issue_report_state.dart';
@@ -16,6 +17,9 @@ class IssueReportBloc extends Bloc<IssueReportEvent, IssueReportState> {
         final issueId = await issueReportRepository.submitIssueReport(event.issueReport);
         emit(IssueReportSubmitted(issueId: issueId));
       } catch (e) {
+        if (kDebugMode) {
+          debugPrint('❌ Issue Report BLoC Error: failed to submit issue report - $e');
+        }
         emit(IssueReportSubmissionFailure(error: 'Issue Report BLoC Error: failed to submit issue report - ${e.toString()}'));
       }
     });
@@ -27,6 +31,9 @@ class IssueReportBloc extends Bloc<IssueReportEvent, IssueReportState> {
         final issueReports = await issueReportRepository.fetchUserIssueReports(event.userId);
         emit(IssueReportsLoaded(issueReports: issueReports));
       } catch (e) {
+        if (kDebugMode) {
+          debugPrint('❌ Issue Report BLoC Error: failed to fetch user issue reports - $e');
+        }
         emit(IssueReportsLoadFailure(error: 'Issue Report BLoC Error: failed to fetch user issue reports - ${e.toString()}'));
       }
     });
@@ -42,6 +49,9 @@ class IssueReportBloc extends Bloc<IssueReportEvent, IssueReportState> {
         );
         emit(IssueReportsLoaded(issueReports: issueReports));
       } catch (e) {
+        if (kDebugMode) {
+          debugPrint('❌ Issue Report BLoC Error: failed to fetch all issue reports - $e');
+        }
         emit(IssueReportsLoadFailure(error: 'Issue Report BLoC Error: failed to fetch all issue reports - ${e.toString()}'));
       }
     });
@@ -58,6 +68,9 @@ class IssueReportBloc extends Bloc<IssueReportEvent, IssueReportState> {
         );
         emit(IssueStatusUpdated());
       } catch (e) {
+        if (kDebugMode) {
+          debugPrint('❌ Issue Report BLoC Error: failed to update issue status - $e');
+        }
         emit(IssueStatusUpdateFailure(error: 'Issue Report BLoC Error: failed to update issue status - ${e.toString()}'));
       }
     });

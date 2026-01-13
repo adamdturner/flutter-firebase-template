@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_firebase_template/envdb.dart';
@@ -37,6 +38,9 @@ class EnvCubit extends Cubit<Env> {
         await setEnv(Env.prod);
       }
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Env Cubit Error: failed to enforce admin only demo mode - $e');
+      }
       // If there's an error fetching user data and we're in demo mode, 
       // switch back to production for safety
       if (state == Env.sandbox) {

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_firebase_template/data/models/issue_report_model.dart';
 import 'package:flutter_firebase_template/data/repositories/repository_utils.dart';
 import 'package:flutter_firebase_template/envdb.dart';
@@ -25,6 +26,9 @@ class IssueReportRepository {
       
       return docRef.id;
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Issue Report Repository Error: failed to submit issue report - $e');
+      }
       if (e.toString().contains('Issue Report Repository Error')) {
         rethrow;
       }
@@ -47,6 +51,9 @@ class IssueReportRepository {
       final data = docSnapshot.data()!;
       return IssueReport.fromMap(data, issueId: issueId);
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Issue Report Repository Error: failed to fetch issue report - $e');
+      }
       if (e.toString().contains('Issue Report Repository Error')) {
         rethrow;
       }
@@ -70,6 +77,9 @@ class IssueReportRepository {
               ))
           .toList();
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Issue Report Repository Error: failed to fetch user issue reports - $e');
+      }
       if (e.toString().contains('Issue Report Repository Error')) {
         rethrow;
       }
@@ -107,6 +117,9 @@ class IssueReportRepository {
               ))
           .toList();
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Issue Report Repository Error: failed to fetch all issue reports - $e');
+      }
       if (e.toString().contains('Issue Report Repository Error')) {
         rethrow;
       }
@@ -141,6 +154,9 @@ class IssueReportRepository {
           .doc(issueId)
           .update(updateData);
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Issue Report Repository Error: failed to update issue status - $e');
+      }
       if (e.toString().contains('Issue Report Repository Error')) {
         rethrow;
       }
@@ -153,6 +169,9 @@ class IssueReportRepository {
     try {
       await _firestore.collection('issue-reports').doc(issueId).delete();
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Issue Report Repository Error: failed to delete issue report - $e');
+      }
       if (e.toString().contains('Issue Report Repository Error')) {
         rethrow;
       }
@@ -190,6 +209,9 @@ class IssueReportRepository {
             .toList();
       });
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Issue Report Repository Error: failed to stream issue reports - $e');
+      }
       throw Exception('Issue Report Repository Error: failed to stream issue reports - ${e.toString()}');
     }
   }
