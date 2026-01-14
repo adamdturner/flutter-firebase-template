@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import 'core/theme_manager.dart';
 import 'core/font_scale_manager.dart';
+import 'core/design_system.dart';
 import 'core/utils/device_utils.dart';
 import 'app/authenticated_providers.dart';
 import 'presentation/screens/central_hub/central_hub_screen.dart';
@@ -70,7 +71,7 @@ class _AuthenticatedMaterialApp extends StatelessWidget {
         statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
         statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
         systemNavigationBarColor:
-            isDark ? const Color(0xFF121212) : Colors.white,
+            isDark ? AppDesignSystem.darkSurface : AppDesignSystem.lightSurface,
         systemNavigationBarIconBrightness:
             isDark ? Brightness.light : Brightness.dark,
       ),

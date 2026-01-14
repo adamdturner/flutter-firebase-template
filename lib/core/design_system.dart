@@ -9,24 +9,24 @@ class AppDesignSystem {
   // ─────────────────────────────────────────────────────────────
   
   // Primary Brand Colors (Light Theme)
-  /// Main purple brand color used for primary buttons and interactive elements in light mode
-  static const Color lightPrimary = Color.fromARGB(255, 124, 58, 237);
+  /// Main slate blue brand color used for primary buttons and interactive elements in light mode
+  static const Color lightPrimary = Color.fromARGB(255, 91, 124, 153);
   
-  /// Light purple color used for hover states and secondary accents in light mode
-  static const Color lightPrimaryHover = Color.fromARGB(255, 196, 181, 253);
+  /// Light blue-grey color used for hover states and secondary accents in light mode
+  static const Color lightPrimaryHover = Color.fromARGB(255, 184, 202, 219);
   
   /// Tertiary brand color (green) used for success states and accents in light mode
   static const Color lightTertiary = Color.fromARGB(255, 34, 197, 94);
   
   // Surface Colors (Light Theme)
-  /// Main background color for the entire app in light mode - pure white
-  static const Color lightSurface = Color.fromARGB(255, 255, 255, 255);
+  /// Main background color for the entire app in light mode - warm off-white with subtle beige tone
+  static const Color lightSurface = Color.fromARGB(255, 252, 252, 250);
   
-  /// Secondary surface color for elevated elements like cards in light mode
-  static const Color lightSurfaceSecondary = Color.fromARGB(255, 249, 250, 251);
+  /// Secondary surface color for elevated elements like cards in light mode - warm light grey
+  static const Color lightSurfaceSecondary = Color.fromARGB(255, 245, 245, 240);
   
-  /// Tertiary surface color for subtle backgrounds and containers in light mode
-  static const Color lightSurfaceTertiary = Color.fromARGB(255, 243, 244, 246);
+  /// Tertiary surface color for subtle backgrounds and containers in light mode - warm grey
+  static const Color lightSurfaceTertiary = Color.fromARGB(255, 238, 238, 230);
   
   /// Elevated surface color for highest elevation elements in light mode
   static const Color lightSurfaceElevated = Color.fromARGB(255, 255, 255, 255);
@@ -59,11 +59,11 @@ class AppDesignSystem {
   // ─────────────────────────────────────────────────────────────
   
   // Primary Brand Colors (Dark Theme)
-  /// Main purple brand color used for primary buttons and interactive elements in dark mode - brighter than light mode
-  static const Color darkPrimary = Color.fromARGB(255, 147, 51, 234);
+  /// Main slate blue brand color used for primary buttons and interactive elements in dark mode - brighter than light mode
+  static const Color darkPrimary = Color.fromARGB(255, 127, 165, 193);
   
-  /// Light purple color used for hover states and secondary accents in dark mode
-  static const Color darkPrimaryHover = Color.fromARGB(255, 196, 181, 253);
+  /// Light blue-grey color used for hover states and secondary accents in dark mode
+  static const Color darkPrimaryHover = Color.fromARGB(255, 184, 202, 219);
   
   /// Tertiary brand color (green) used for success states and accents in dark mode
   static const Color darkTertiary = Color.fromARGB(255, 34, 197, 94);

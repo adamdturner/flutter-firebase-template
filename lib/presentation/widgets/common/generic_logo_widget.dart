@@ -38,7 +38,7 @@ class LogoWidget extends StatelessWidget {
                 (isDark ? Border.all(color: AppDesignSystem.onSurfaceDarkTertiary.withOpacity(0.3)) : null),
       ),
       child: Image.asset(
-        'assets/images/generic_logo.png',
+        'assets/images/Firebase-Template-Logo.png',
         height: height ?? 175,
         width: width ?? 350,
         fit: fit,

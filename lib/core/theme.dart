@@ -22,7 +22,7 @@ ThemeData appTheme() {
   return ThemeData(
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(
-      seedColor: const Color.fromARGB(255, 255, 238, 4),
+      seedColor: AppDesignSystem.primary,
       brightness: Brightness.light,
       primary: AppDesignSystem.primary,
       onPrimary: Colors.white,

@@ -38,7 +38,7 @@ class IconWidget extends StatelessWidget {
                 (isDark ? Border.all(color: AppDesignSystem.onSurfaceDarkTertiary.withOpacity(0.3)) : null),
       ),
       child: Image.asset(
-        'assets/icons/generic_icon.png',
+        'assets/icons/Penguin-Icon-256.png',
         height: height ?? 80,
         width: width ?? 80,
         fit: fit,
