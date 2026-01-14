@@ -187,11 +187,8 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
                 ),
               ]),
 
-              // Admin sections (only in production mode)
+              // Admin sections (only for admin users)
               if (isAdmin) ...[
-                SizedBox(height: AppDesignSystem.spacing24),
-                _buildModeSwitchingSection(context, isDemoMode),
-                
                 if (!isDemoMode) ...[
                   SizedBox(height: AppDesignSystem.spacing24),
                   _buildSectionHeader(context, 'Admin Tools', Icons.build_outlined),
@@ -221,18 +218,31 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
                       },
                     ),
                   ]),
-                  
-                  SizedBox(height: AppDesignSystem.spacing24),
-                  _buildSectionHeader(context, 'Admin Controls', Icons.admin_panel_settings),
-                  SizedBox(height: AppDesignSystem.spacing12),
-                  _buildButtonCard(context, [
+                ],
+                
+                SizedBox(height: AppDesignSystem.spacing24),
+                _buildSectionHeader(context, 'Admin Controls', Icons.admin_panel_settings),
+                SizedBox(height: AppDesignSystem.spacing12),
+                _buildButtonCard(context, [
+                  if (!isDemoMode)
                     AppNavigationButton(
                       text: "Add Admin",
                       icon: Icons.person_add,
                       onPressed: () => Navigator.pushNamed(context, '/add_admin'),
                     ),
-                  ]),
-                ],
+                  BlocBuilder<EnvCubit, Env>(
+                    builder: (context, env) {
+                      final buttonText = env == Env.sandbox 
+                          ? 'Switch to Production Mode'
+                          : 'Switch to Demo Mode';
+                      return AppNavigationButton(
+                        text: buttonText,
+                        icon: Icons.swap_horiz,
+                        onPressed: () => _showModeSwitchConfirmation(context),
+                      );
+                    },
+                  ),
+                ]),
               ],
 
               SizedBox(height: AppDesignSystem.spacing24),
@@ -447,6 +457,15 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
   Widget _buildButtonCard(BuildContext context, List<Widget> buttons) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
+    // Add spacing between buttons
+    final spacedButtons = <Widget>[];
+    for (int i = 0; i < buttons.length; i++) {
+      spacedButtons.add(buttons[i]);
+      if (i < buttons.length - 1) {
+        spacedButtons.add(SizedBox(height: AppDesignSystem.spacing8));
+      }
+    }
+    
     return Container(
       decoration: BoxDecoration(
         color: isDark 
@@ -465,7 +484,7 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
           vertical: AppDesignSystem.spacing8,
         ),
         child: Column(
-          children: buttons,
+          children: spacedButtons,
         ),
       ),
     );
@@ -504,49 +523,6 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
           ],
         );
       },
-    );
-  }
-
-  Widget _buildModeSwitchingSection(BuildContext context, bool isDemoMode) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionHeader(context, 'Mode Switching', Icons.swap_horiz),
-        SizedBox(height: AppDesignSystem.spacing12),
-        Container(
-          decoration: BoxDecoration(
-            color: isDark 
-                ? AppDesignSystem.surfaceDarkSecondary 
-                : Colors.grey.shade50,
-            borderRadius: BorderRadius.circular(AppDesignSystem.radius16),
-            border: Border.all(
-              color: isDark 
-                  ? Colors.grey.shade800 
-                  : Colors.grey.shade200,
-            ),
-          ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: AppDesignSystem.spacing16,
-              vertical: AppDesignSystem.spacing8,
-            ),
-            child: BlocBuilder<EnvCubit, Env>(
-              builder: (context, env) {
-                final buttonText = env == Env.sandbox 
-                    ? 'Switch to Production Mode'
-                    : 'Switch to Demo Mode';
-                return AppNavigationButton(
-                  text: buttonText,
-                  icon: Icons.swap_horiz,
-                  onPressed: () => _showModeSwitchConfirmation(context),
-                );
-              },
-            ),
-          ),
-        ),
-      ],
     );
   }
 
