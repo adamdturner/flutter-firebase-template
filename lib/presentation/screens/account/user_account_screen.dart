@@ -641,8 +641,12 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
   }
 
   Future<void> _switchEnvironment(BuildContext context, Env targetEnv) async {
+    // Capture EnvCubit before any async work. After sign-out this widget is
+    // disposed (login screen is shown), so context/mounted cannot be used.
+    final envCubit = context.read<EnvCubit>();
+
     try {
-      // First, show a loading indicator
+      // Show loading only while we're still mounted (before sign-out).
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -656,56 +660,26 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
           ),
         );
       }
-      
-      // Sign out the user first and wait for it to complete
-      if (mounted) {
-        final authBloc = context.read<AuthBloc>();
-        authBloc.add(AuthSignOutRequested());
-        
-        // Wait for the sign-out to complete by listening to AuthBloc
-        await authBloc.stream.firstWhere(
-          (state) => state is AuthUnauthenticated,
-        );
-      }
-      
-      // Now switch environment - this will only happen after user is signed out
-      if (mounted) {
-        await context.read<EnvCubit>().setEnv(targetEnv);
-      }
-      
-      // Show success message
-      if (mounted) {
-        final modeName = targetEnv == Env.sandbox ? 'Demo' : 'Production';
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Switched to $modeName Mode. Please sign in again.',
-              style: const TextStyle(color: Colors.white),
-            ),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        );
-      }
+
+      // Sign out the user and wait for it to complete
+      final authBloc = context.read<AuthBloc>();
+      authBloc.add(AuthSignOutRequested());
+
+      await authBloc.stream.firstWhere(
+        (state) => state is AuthUnauthenticated,
+      );
+
+      // Switch environment using the captured cubit. Do not use context or
+      // mounted here — this widget may already be disposed after sign-out.
+      await envCubit.setEnv(targetEnv);
+
+      // Do not show a success snackbar here: the account screen and its
+      // Scaffold are disposed, so the messenger would trigger setState on
+      // a disposed widget and crash. The user sees the login screen and
+      // the mode badge (Demo / Production) for feedback.
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Error switching environment: $e',
-              style: const TextStyle(color: Colors.white),
-            ),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        );
-      }
+      // Same as above: we cannot safely show a snackbar after sign-out.
+      debugPrint('Error switching environment: $e');
     }
   }
 
