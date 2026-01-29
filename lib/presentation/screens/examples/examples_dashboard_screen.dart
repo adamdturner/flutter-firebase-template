@@ -186,10 +186,4 @@ class ExamplesDashboardScreen extends StatelessWidget {
     );
   }
 
-  /// Shows a snackbar for example screens not yet implemented.
-  void _showComingSoon(BuildContext context, String name) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$name example — coming soon')),
-    );
-  }
 }
