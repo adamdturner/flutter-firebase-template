@@ -66,7 +66,7 @@ class ExamplesDashboardScreen extends StatelessWidget {
             title: 'QR Example',
             description: 'QR scanning and code display.',
             isDark: isDark,
-            onTap: () => _showComingSoon(context, 'QR'),
+            onTap: () => Navigator.pushNamed(context, '/examples/qr'),
           ),
         ],
       ),

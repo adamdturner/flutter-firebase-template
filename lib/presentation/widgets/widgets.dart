@@ -21,3 +21,9 @@ export 'lists/list_item_tile_widget.dart';
 export 'lists/list_widget.dart';
 export 'lists/list_section_card_widget.dart';
 
+// QR widgets
+export 'qr/custom_qr_code_widget.dart';
+export 'qr/branded_qr_code_widget.dart';
+export 'qr/qr_display_widget.dart';
+export 'qr/qr_scanner_widget.dart';
+

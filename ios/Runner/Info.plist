@@ -26,6 +26,10 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>This app uses the camera to scan QR codes and barcodes.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app saves QR codes to your photo library so you can share or print them.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
