@@ -7,6 +7,8 @@ import 'package:flutter_firebase_template/presentation/screens/auth/forgot_passw
 import 'package:flutter_firebase_template/presentation/screens/central_hub/central_hub_screen.dart';
 import 'package:flutter_firebase_template/presentation/screens/examples/examples_dashboard_screen.dart';
 import 'package:flutter_firebase_template/presentation/screens/examples/form_fields_example_screen.dart';
+import 'package:flutter_firebase_template/presentation/screens/examples/graph_example_screen.dart';
+import 'package:flutter_firebase_template/presentation/screens/examples/table_example_screen.dart';
 import 'package:flutter_firebase_template/presentation/screens/examples/info_widget_example_screen.dart';
 import 'package:flutter_firebase_template/presentation/screens/examples/list_example_screen.dart';
 import 'package:flutter_firebase_template/presentation/screens/examples/qr_example_screen.dart';
@@ -56,6 +58,10 @@ class AppRouter {
         return _noAnimationRoute(const ExamplesDashboardScreen());
       case '/examples/form_fields':
         return _noAnimationRoute(const FormFieldsExampleScreen());
+      case '/examples/graphs':
+        return _noAnimationRoute(const GraphExampleScreen());
+      case '/examples/table':
+        return _noAnimationRoute(const TableExampleScreen());
       case '/examples/info_widgets':
         return _noAnimationRoute(const InfoWidgetExampleScreen());
       case '/examples/list':

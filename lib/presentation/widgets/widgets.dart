@@ -21,6 +21,15 @@ export 'lists/list_item_tile_widget.dart';
 export 'lists/list_widget.dart';
 export 'lists/list_section_card_widget.dart';
 
+// Table widgets
+export 'tables/app_data_table_widget.dart';
+export 'tables/app_table_card_widget.dart';
+
+// Chart widgets
+export 'charts/app_line_chart_widget.dart';
+export 'charts/app_bar_chart_widget.dart';
+export 'charts/app_pie_chart_widget.dart';
+
 // QR widgets
 export 'qr/custom_qr_code_widget.dart';
 export 'qr/branded_qr_code_widget.dart';
