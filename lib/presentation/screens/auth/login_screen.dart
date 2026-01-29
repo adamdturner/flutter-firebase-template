@@ -228,54 +228,77 @@ class _LoginFormState extends State<_LoginForm> {
     
     return Column(
       children: [
-        // Demo Mode Indicator
+        // Demo Mode Indicator and Return to Production button
         BlocBuilder<EnvCubit, Env>(
           builder: (context, env) {
             if (env == Env.sandbox) {
-              return Container(
-                width: double.infinity,
-                margin: const EdgeInsets.only(bottom: AppDesignSystem.spacing16),
-                padding: const EdgeInsets.symmetric(
-                  vertical: AppDesignSystem.spacing12,
-                  horizontal: AppDesignSystem.spacing16,
-                ),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.orange.shade400,
-                      Colors.orange.shade600,
-                    ],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.only(bottom: AppDesignSystem.spacing12),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppDesignSystem.spacing12,
+                      horizontal: AppDesignSystem.spacing16,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.orange.shade400,
+                          Colors.orange.shade600,
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                      borderRadius: BorderRadius.circular(AppDesignSystem.radius12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.orange.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.warning_amber_rounded,
+                          color: Colors.white,
+                          size: AppDesignSystem.iconMedium,
+                        ),
+                        const SizedBox(width: AppDesignSystem.spacing8),
+                        Text(
+                          'DEMO MODE',
+                          style: AppTextStyles.heading3.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(AppDesignSystem.radius12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.orange.withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.warning_amber_rounded,
-                      color: Colors.white,
-                      size: AppDesignSystem.iconMedium,
-                    ),
-                    const SizedBox(width: AppDesignSystem.spacing8),
-                    Text(
-                      'DEMO MODE',
-                      style: AppTextStyles.heading3.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.5,
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: AppDesignSystem.spacing16),
+                    child: OutlinedButton.icon(
+                      onPressed: () async {
+                        await context.read<EnvCubit>().setEnv(Env.prod);
+                      },
+                      icon: const Icon(Icons.swap_horiz, size: 20),
+                      label: const Text('Return to production env'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.orange.shade700,
+                        side: BorderSide(color: Colors.orange.shade400),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: AppDesignSystem.spacing12,
+                          horizontal: AppDesignSystem.spacing16,
+                        ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               );
             }
             return const SizedBox.shrink();

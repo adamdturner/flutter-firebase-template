@@ -3,17 +3,27 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_firebase_template/data/services/auth_service.dart';
-
+import 'package:flutter_firebase_template/envdb.dart';
 import 'package:flutter_firebase_template/data/repositories/auth_repository.dart';
+import 'package:flutter_firebase_template/data/repositories/user_repository.dart';
 import 'package:flutter_firebase_template/logic/auth/auth_event.dart';
 import 'package:flutter_firebase_template/logic/auth/auth_state.dart';
+import 'package:flutter_firebase_template/logic/database_switch/env_cubit.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
   final AuthService _authService = AuthService();
+  final EnvCubit _envCubit;
+  final UserRepository _prodUserRepository;
   late final StreamSubscription<User?> _authSubscription;
 
-  AuthBloc(this._authRepository) : super(AuthInitial()) {
+  AuthBloc(
+    this._authRepository, {
+    required EnvCubit envCubit,
+    required UserRepository prodUserRepository,
+  })  : _envCubit = envCubit,
+        _prodUserRepository = prodUserRepository,
+        super(AuthInitial()) {
     on<AuthStarted>(_onStarted);
     on<AuthSignUpRequested>(_onSignUpRequested);
     on<AuthSignInRequested>(_onSignInRequested);
@@ -70,11 +80,31 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final userCredential = await _authRepository.signIn(email: event.email, password: event.password);
       final user = userCredential.user;
-      if (user != null) {
-        emit(AuthAuthenticated(user));
-      } else {
+      if (user == null) {
         emit(AuthUnauthenticated());
+        return;
       }
+
+      // In demo mode, only admins may sign in. Check production user role.
+      if (_envCubit.state == Env.sandbox) {
+        try {
+          final userModel = await _prodUserRepository.fetchUserData(user.uid);
+          if (userModel.role != 'admin') {
+            await _authRepository.signOut();
+            emit(AuthFailure(error: 'Only admins can sign in when Demo mode is active.'));
+            return;
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            debugPrint('❌ Auth BLoC Error: failed to check admin for demo login - $e');
+          }
+          await _authRepository.signOut();
+          emit(AuthFailure(error: 'Only admins can sign in when Demo mode is active.'));
+          return;
+        }
+      }
+
+      emit(AuthAuthenticated(user));
     } catch (e) {
       if (kDebugMode) {
         debugPrint('❌ Auth BLoC Error: failed to sign in - $e');

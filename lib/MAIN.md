@@ -35,6 +35,7 @@ The `EnvCubit` manages environment selection (production vs sandbox):
 - Loaded before app starts from shared preferences
 - Accessed throughout app for database instance selection
 - AuthRepository always uses production for sign-up/sign-in
+- When in sandbox (demo) mode, only admin users may sign in; non-admins are rejected at login
 
 ## Example
 

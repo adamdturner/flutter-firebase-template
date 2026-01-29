@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import '../core/theme_manager.dart';
 import '../core/font_scale_manager.dart';
 import '../data/repositories/auth_repository.dart';
+import '../data/repositories/user_repository.dart';
+import '../envdb.dart';
 import '../logic/auth/auth_bloc.dart';
 import '../logic/auth/auth_event.dart';
 import '../logic/database_switch/env_cubit.dart';
@@ -55,10 +57,17 @@ class _AuthBlocProvider extends StatelessWidget {
     // AuthBloc uses production environment for auth operations.
     // Sign-up user data always goes to prod; env-aware reads happen
     // via UserRepository in the authenticated scope.
+    // Demo-mode login is restricted to admins via production UserRepository.
     final authRepository = AuthRepository();
+    final envCubit = context.read<EnvCubit>();
+    final prodUserRepository = UserRepository(envDb: EnvDb(Env.prod));
 
     return BlocProvider<AuthBloc>(
-      create: (_) => AuthBloc(authRepository)..add(AuthStarted()),
+      create: (_) => AuthBloc(
+        authRepository,
+        envCubit: envCubit,
+        prodUserRepository: prodUserRepository,
+      )..add(AuthStarted()),
       child: child,
     );
   }

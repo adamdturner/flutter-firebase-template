@@ -163,6 +163,11 @@ class ProfileScreen extends StatelessWidget {
 }
 ```
 
+## Auth Screens (Login)
+
+- **Login screen** (`auth/login_screen.dart`): Handles sign-in, sign-up link, forgot password, and demo-mode indicator.
+- When the app is in **Demo mode** (sandbox environment), only users with **admin** role in the production database may sign in. Non-admin sign-in attempts are rejected and the user is signed out; the error "Only admins can sign in when Demo mode is active." is shown via `AuthBloc`'s `AuthFailure` state (displayed as a snackbar by the login screen).
+
 ## Best Practices
 - Keep build methods clean and readable
 - Extract complex UI sections into separate methods
