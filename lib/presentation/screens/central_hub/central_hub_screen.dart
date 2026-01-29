@@ -175,13 +175,9 @@ class CentralHubScreen extends StatelessWidget {
         ),
         _buildQuickActionCard(
           context: context,
-          icon: Icons.star_outline,
-          label: 'Feature 1',
-          onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Feature 1 - Not implemented')),
-            );
-          },
+          icon: Icons.dashboard_customize_outlined,
+          label: 'Examples',
+          onTap: () => Navigator.pushNamed(context, '/examples'),
         ),
         _buildQuickActionCard(
           context: context,

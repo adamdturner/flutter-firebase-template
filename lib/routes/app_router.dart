@@ -5,6 +5,10 @@ import 'package:flutter_firebase_template/presentation/screens/auth/signup_scree
 import 'package:flutter_firebase_template/presentation/screens/auth/loading_screen.dart';
 import 'package:flutter_firebase_template/presentation/screens/auth/forgot_password_screen.dart';
 import 'package:flutter_firebase_template/presentation/screens/central_hub/central_hub_screen.dart';
+import 'package:flutter_firebase_template/presentation/screens/examples/examples_dashboard_screen.dart';
+import 'package:flutter_firebase_template/presentation/screens/examples/form_fields_example_screen.dart';
+import 'package:flutter_firebase_template/presentation/screens/examples/info_widget_example_screen.dart';
+import 'package:flutter_firebase_template/presentation/screens/examples/list_example_screen.dart';
 import 'package:flutter_firebase_template/presentation/screens/account/user_account_screen.dart';
 import 'package:flutter_firebase_template/presentation/screens/account/user_agreement_screen.dart';
 import 'package:flutter_firebase_template/presentation/screens/account/report_issue_screen.dart';
@@ -45,6 +49,16 @@ class AppRouter {
           ),
         );
       
+      // Examples
+      case '/examples':
+        return _noAnimationRoute(const ExamplesDashboardScreen());
+      case '/examples/form_fields':
+        return _noAnimationRoute(const FormFieldsExampleScreen());
+      case '/examples/info_widgets':
+        return _noAnimationRoute(const InfoWidgetExampleScreen());
+      case '/examples/list':
+        return _noAnimationRoute(const ListExampleScreen());
+
       // Account screens
       case '/account':
         return _noAnimationRoute(const UserAccountScreen());

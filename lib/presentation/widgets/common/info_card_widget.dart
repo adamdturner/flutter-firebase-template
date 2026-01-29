@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_template/core/design_system.dart';
-import 'package:flutter_firebase_template/presentation/widgets/widgets.dart';
+import 'package:flutter_firebase_template/presentation/widgets/common/app_navigation_button_widget.dart';
 
 /// A reusable info card widget with consistent styling that uses theme fonts and colors
 /// 
